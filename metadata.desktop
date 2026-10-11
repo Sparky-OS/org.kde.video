@@ -9,4 +9,5 @@ Icon=preferences-desktop-wallpaper
 X-Plasma-MainScript=ui/main.qml
 X-KDE-PluginInfo-Name=org.kde.video
 X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-PluginInfo-License=MIT
 
