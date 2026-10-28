@@ -1,28 +1,40 @@
 # org.kde.video
 
-Using KDE Plasma 5.8 or higher? Use the contents of this repository to create an animated wallpaper or lock screen. This is NOT my original work. I learned how to do it from a [KDE Forum discussion](https://forum.kde.org/viewtopic.php?f=289&t=131783).
+A video wallpaper and lock screen for KDE Plasma 6. I learned how to do it from a [KDE Forum discussion](https://forum.kde.org/viewtopic.php?f=289&t=131783), and contributors have added to it since.
 
 Feel free to use and add to this project!
 
-## Example   
-  
-[![Flaming Plasma 5.8+ Lockscreen](http://i3.ytimg.com/vi/T7cHWc-OOvE/hqdefault.jpg)](https://youtu.be/T7cHWc-OOvE)
+Still on Plasma 5? The last Plasma 5 version is commit [`0e71b41`](https://github.com/Sparky-OS/org.kde.video/tree/0e71b41).
 
-## Instructions  
-Clone this repository into `~/.local/share/plasma/wallpapers/` (The resulting path should be `~/.local/share/plasma/wallpapers/org.kde.video`)
+## Example
 
-Now just go into wallpaper or lock screen settings and chose "Video" instead of "Image".
+[![Flaming Plasma lockscreen](http://i3.ytimg.com/vi/T7cHWc-OOvE/hqdefault.jpg)](https://youtu.be/T7cHWc-OOvE)
+
+## Instructions
+
+Clone this repository and install it with `kpackagetool6`:
+
+```sh
+git clone https://github.com/Sparky-OS/org.kde.video.git
+kpackagetool6 --type Plasma/Wallpaper --install org.kde.video
+```
+
+Use `--upgrade` instead of `--install` to update. Then go into the wallpaper or lock screen settings and choose "Video" instead of "Image".
+
+SparkyLinux users can install it from APTus instead.
 
 ## FAQ
 
-<b> Using org.kde.video results in black screen, how can I solve? </b>
+<b>The wallpaper is black, or plays sound but no picture. How can I solve it?</b>
 
-Just install `qt-gstreamer` and `gst-libav`
+Qt 6 plays video through FFmpeg, so it can only play what your FFmpeg build can decode. Fedora's default `ffmpeg-free` leaves out H.264 and HEVC; installing the full FFmpeg from RPM Fusion fixes that. To see the actual error, run `journalctl --user -u plasma-plasmashell -f` and look for lines starting with `org.kde.video:`.
 
-## Playlists support
+## Playlists
 
-<b> Media files musn't contan any spaces </b>
+Choose an `.m3u` or `.m3u8` file instead of a video to play several videos in a row, in order or shuffled. Each line is a video path or URL; lines starting with `#` are ignored. Relative paths are relative to the playlist's folder, and spaces in names are fine.
 
-### Supported formats:
-- m3u
-- m3u8
+Playlists need Plasma's `org.kde.plasma.plasma5support` QML module, which most Plasma 6 installs already have.
+
+## Development
+
+`ci/check.sh` runs the same checks as CI: `qmllint`, the QML tests in `tests/`, and a test install with `kpackagetool6`. It needs Qt 6 and Plasma 6 development tools; CI runs it in a Fedora container (see `.github/workflows/check.yml`).
