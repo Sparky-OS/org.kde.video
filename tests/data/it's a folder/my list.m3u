@@ -1,0 +1,6 @@
+#EXTM3U
+#EXTINF:10,First
+first clip.mp4
+
+/abs/path/second.mkv
+https://example.com/third.webm
