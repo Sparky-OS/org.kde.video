@@ -1,0 +1,41 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [stereo3d]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, unit tests, package install
+    runs-on: ubuntu-latest
+    container: quay.io/fedora/fedora:44
+    steps:
+      - name: Install Plasma 6 and Qt 6 tooling
+        run: >
+          dnf -y -q install git jq
+          qt6-qtdeclarative-devel qt6-qtmultimedia
+          libplasma plasma5support kf6-kpackage kf6-kirigami
+      - uses: actions/checkout@v4
+      - run: ci/check.sh
+
+  session:
+    name: Plays a playlist in a live Plasma session
+    runs-on: ubuntu-latest
+    container: quay.io/fedora/fedora:44
+    steps:
+      - name: Install Plasma 6, KWin and FFmpeg
+        run: >
+          dnf -y -q install git
+          plasma-workspace kwin-wayland kf6-kpackage plasma5support qt6-qtmultimedia
+          qt6-qttools dbus-daemon ffmpeg-free mesa-dri-drivers google-noto-sans-fonts
+      - uses: actions/checkout@v4
+      - run: ci/session-smoke.sh smoke-output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: session-logs
+          path: smoke-output/
