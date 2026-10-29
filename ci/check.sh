@@ -11,21 +11,8 @@ step "metadata.json"
 jq -e '.KPlugin.Id == "org.kde.video" and .KPackageStructure == "Plasma/Wallpaper"' metadata.json
 
 step "qmllint"
-# qmllint can't see what Plasma injects at runtime (i18nd, parentLayout) or the
-# type of a Loader's item, so those warnings are expected. Anything else fails.
-failed=0
-while IFS=$'\t' read -r file line message; do
-    source_line=$(sed -n "${line}p" "$file")
-    if [[ $message == "Unqualified access" && $source_line =~ i18nd\(|parentLayout ]] ||
-       [[ $message == 'Member "read" not found on type "QObject"' ]]; then
-        continue
-    fi
-    echo "$file:$line: $message"
-    echo "    $source_line"
-    failed=1
-done < <(/usr/lib64/qt6/bin/qmllint --json - contents/ui/*.qml |
-         jq -r '.files[] | .filename as $f | .warnings[] | [$f, .line, .message] | @tsv')
-[[ $failed == 0 ]]
+bash tests/check-lint.sh
+bash ci/lint.sh /usr/lib64/qt6/bin/qmllint contents/ui/*.qml
 
 step "QML unit tests"
 /usr/lib64/qt6/bin/qmltestrunner -input tests
