@@ -16,9 +16,9 @@ WallpaperItem {
     property int queueIndex: -1
     property int failuresInARow: 0  // stops a playlist of broken files from spinning
 
-    onVideoUrlChanged: load()
-    onShuffleChanged: if (isPlaylist) load()
-    Component.onCompleted: load()
+    onVideoUrlChanged: Qt.callLater(load)
+    onShuffleChanged: if (isPlaylist) Qt.callLater(load)
+    Component.onCompleted: Qt.callLater(load)
 
     // This is what Qt's Video element is made of. Video doesn't expose
     // mediaStatus, which the playlist needs to know when a video has ended.
